@@ -1,0 +1,1182 @@
+--!nocheck
+-- ARTIGOHUB - Sharp Small Side Buttons, Fast Snow & Dynamic Theme Engine
+-- Put this in StarterPlayer > StarterPlayerScripts (or StarterGui as a LocalScript).
+
+local Players           = game:GetService("Players")
+local RunService        = game:GetService("RunService")
+local TweenService      = game:GetService("TweenService")
+local UserInputService  = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+----------------------------------------------------------------------
+-- Theme Presets & Configuration
+----------------------------------------------------------------------
+local ThemePresets = {
+	["Oceanic Blue"] = {
+		MainBg             = Color3.fromRGB(20, 25, 35),
+		MainBgTransparency = 0.35,
+		MainStroke         = Color3.fromRGB(120, 180, 255),
+		MainStrokeTrans    = 0.45,
+		MainStrokeThick    = 1,
+		SheenColor         = Color3.fromRGB(255, 255, 255),
+		SheenTransparency  = 0.93,
+		HeaderBg           = Color3.fromRGB(12, 16, 24),
+		TabBtnActive       = Color3.fromRGB(45, 65, 95),
+		TabBtnInactive     = Color3.fromRGB(20, 25, 35),
+		TabTextActive      = Color3.fromRGB(220, 240, 255),
+		TabTextInactive    = Color3.fromRGB(140, 160, 190),
+		RowBg              = Color3.fromRGB(26, 32, 45),
+		RowBgTransparency  = 0.4,
+		TextPrimary        = Color3.fromRGB(210, 220, 240),
+		TextAccent         = Color3.fromRGB(130, 195, 255),
+		BottomBarBg        = Color3.fromRGB(12, 16, 24),
+		StartBtnOff        = Color3.fromRGB(35, 45, 65),
+		StartBtnOn         = Color3.fromRGB(35, 120, 75),
+		StartBtnStroke     = Color3.fromRGB(70, 95, 135),
+		StartBtnText       = Color3.fromRGB(240, 250, 255),
+		StatusText         = Color3.fromRGB(180, 195, 220),
+		SideBtnBg          = Color3.fromRGB(15, 15, 15),
+		SideBtnOpen        = Color3.fromRGB(18, 32, 48),
+		SideBtnClosed      = Color3.fromRGB(45, 20, 20),
+		SideBtnLocked      = Color3.fromRGB(55, 45, 20),
+		SideBtnHover       = Color3.fromRGB(30, 38, 52),
+		SideStroke         = Color3.fromRGB(60, 85, 120),
+		SideText           = Color3.fromRGB(240, 245, 255),
+		SnowColor          = Color3.fromRGB(255, 255, 255)
+	},
+	["Crimson Blood"] = {
+		MainBg             = Color3.fromRGB(25, 12, 14),
+		MainBgTransparency = 0.3,
+		MainStroke         = Color3.fromRGB(255, 60, 80),
+		MainStrokeTrans    = 0.35,
+		MainStrokeThick    = 1,
+		SheenColor         = Color3.fromRGB(255, 120, 120),
+		SheenTransparency  = 0.94,
+		HeaderBg           = Color3.fromRGB(18, 8, 10),
+		TabBtnActive       = Color3.fromRGB(90, 25, 35),
+		TabBtnInactive     = Color3.fromRGB(28, 12, 15),
+		TabTextActive      = Color3.fromRGB(255, 210, 215),
+		TabTextInactive    = Color3.fromRGB(170, 110, 120),
+		RowBg              = Color3.fromRGB(38, 16, 20),
+		RowBgTransparency  = 0.4,
+		TextPrimary        = Color3.fromRGB(245, 210, 215),
+		TextAccent         = Color3.fromRGB(255, 75, 95),
+		BottomBarBg        = Color3.fromRGB(18, 8, 10),
+		StartBtnOff        = Color3.fromRGB(65, 20, 28),
+		StartBtnOn         = Color3.fromRGB(130, 25, 45),
+		StartBtnStroke     = Color3.fromRGB(180, 45, 65),
+		StartBtnText       = Color3.fromRGB(255, 230, 235),
+		StatusText         = Color3.fromRGB(220, 160, 170),
+		SideBtnBg          = Color3.fromRGB(16, 10, 12),
+		SideBtnOpen        = Color3.fromRGB(48, 16, 22),
+		SideBtnClosed      = Color3.fromRGB(35, 10, 10),
+		SideBtnLocked      = Color3.fromRGB(60, 20, 20),
+		SideBtnHover       = Color3.fromRGB(50, 18, 24),
+		SideStroke         = Color3.fromRGB(130, 35, 50),
+		SideText           = Color3.fromRGB(255, 220, 225),
+		SnowColor          = Color3.fromRGB(255, 180, 190)
+	},
+	["Cyber Neon"] = {
+		MainBg             = Color3.fromRGB(18, 12, 28),
+		MainBgTransparency = 0.28,
+		MainStroke         = Color3.fromRGB(220, 60, 255),
+		MainStrokeTrans    = 0.3,
+		MainStrokeThick    = 1,
+		SheenColor         = Color3.fromRGB(0, 255, 230),
+		SheenTransparency  = 0.94,
+		HeaderBg           = Color3.fromRGB(12, 8, 20),
+		TabBtnActive       = Color3.fromRGB(75, 25, 110),
+		TabBtnInactive     = Color3.fromRGB(22, 14, 34),
+		TabTextActive      = Color3.fromRGB(0, 255, 235),
+		TabTextInactive    = Color3.fromRGB(160, 120, 190),
+		RowBg              = Color3.fromRGB(32, 18, 48),
+		RowBgTransparency  = 0.45,
+		TextPrimary        = Color3.fromRGB(235, 220, 255),
+		TextAccent         = Color3.fromRGB(0, 240, 255),
+		BottomBarBg        = Color3.fromRGB(12, 8, 20),
+		StartBtnOff        = Color3.fromRGB(50, 20, 75),
+		StartBtnOn         = Color3.fromRGB(0, 160, 140),
+		StartBtnStroke     = Color3.fromRGB(180, 45, 230),
+		StartBtnText       = Color3.fromRGB(255, 255, 255),
+		StatusText         = Color3.fromRGB(200, 175, 230),
+		SideBtnBg          = Color3.fromRGB(14, 10, 20),
+		SideBtnOpen        = Color3.fromRGB(42, 18, 65),
+		SideBtnClosed      = Color3.fromRGB(30, 12, 24),
+		SideBtnLocked      = Color3.fromRGB(70, 25, 50),
+		SideBtnHover       = Color3.fromRGB(55, 22, 80),
+		SideStroke         = Color3.fromRGB(170, 50, 220),
+		SideText           = Color3.fromRGB(220, 255, 255),
+		SnowColor          = Color3.fromRGB(190, 140, 255)
+	},
+	["Emerald Matrix"] = {
+		MainBg             = Color3.fromRGB(12, 24, 18),
+		MainBgTransparency = 0.3,
+		MainStroke         = Color3.fromRGB(50, 230, 130),
+		MainStrokeTrans    = 0.4,
+		MainStrokeThick    = 1,
+		SheenColor         = Color3.fromRGB(120, 255, 180),
+		SheenTransparency  = 0.95,
+		HeaderBg           = Color3.fromRGB(8, 16, 12),
+		TabBtnActive       = Color3.fromRGB(25, 75, 45),
+		TabBtnInactive     = Color3.fromRGB(14, 30, 20),
+		TabTextActive      = Color3.fromRGB(180, 255, 215),
+		TabTextInactive    = Color3.fromRGB(110, 170, 135),
+		RowBg              = Color3.fromRGB(18, 38, 26),
+		RowBgTransparency  = 0.45,
+		TextPrimary        = Color3.fromRGB(215, 245, 225),
+		TextAccent         = Color3.fromRGB(60, 245, 140),
+		BottomBarBg        = Color3.fromRGB(8, 16, 12),
+		StartBtnOff        = Color3.fromRGB(22, 55, 35),
+		StartBtnOn         = Color3.fromRGB(35, 140, 75),
+		StartBtnStroke     = Color3.fromRGB(50, 180, 105),
+		StartBtnText       = Color3.fromRGB(240, 255, 245),
+		StatusText         = Color3.fromRGB(160, 215, 180),
+		SideBtnBg          = Color3.fromRGB(10, 18, 14),
+		SideBtnOpen        = Color3.fromRGB(18, 48, 30),
+		SideBtnClosed      = Color3.fromRGB(30, 18, 18),
+		SideBtnLocked      = Color3.fromRGB(50, 45, 15),
+		SideBtnHover       = Color3.fromRGB(24, 60, 38),
+		SideStroke         = Color3.fromRGB(45, 150, 85),
+		SideText           = Color3.fromRGB(215, 255, 230),
+		SnowColor          = Color3.fromRGB(160, 255, 195)
+	},
+	["Obsidian Void"] = {
+		MainBg             = Color3.fromRGB(12, 12, 14),
+		MainBgTransparency = 0.2,
+		MainStroke         = Color3.fromRGB(65, 65, 75),
+		MainStrokeTrans    = 0.3,
+		MainStrokeThick    = 1,
+		SheenColor         = Color3.fromRGB(255, 255, 255),
+		SheenTransparency  = 0.96,
+		HeaderBg           = Color3.fromRGB(8, 8, 10),
+		TabBtnActive       = Color3.fromRGB(32, 32, 38),
+		TabBtnInactive     = Color3.fromRGB(16, 16, 20),
+		TabTextActive      = Color3.fromRGB(255, 255, 255),
+		TabTextInactive    = Color3.fromRGB(130, 130, 140),
+		RowBg              = Color3.fromRGB(20, 20, 24),
+		RowBgTransparency  = 0.45,
+		TextPrimary        = Color3.fromRGB(230, 230, 235),
+		TextAccent         = Color3.fromRGB(200, 200, 210),
+		BottomBarBg        = Color3.fromRGB(8, 8, 10),
+		StartBtnOff        = Color3.fromRGB(30, 30, 36),
+		StartBtnOn         = Color3.fromRGB(60, 60, 72),
+		StartBtnStroke     = Color3.fromRGB(90, 90, 105),
+		StartBtnText       = Color3.fromRGB(255, 255, 255),
+		StatusText         = Color3.fromRGB(160, 160, 170),
+		SideBtnBg          = Color3.fromRGB(10, 10, 12),
+		SideBtnOpen        = Color3.fromRGB(28, 28, 34),
+		SideBtnClosed      = Color3.fromRGB(35, 15, 15),
+		SideBtnLocked      = Color3.fromRGB(45, 45, 52),
+		SideBtnHover       = Color3.fromRGB(38, 38, 44),
+		SideStroke         = Color3.fromRGB(60, 60, 70),
+		SideText           = Color3.fromRGB(235, 235, 240),
+		SnowColor          = Color3.fromRGB(220, 220, 230)
+	},
+	["Frostbite Silver"] = {
+		MainBg             = Color3.fromRGB(24, 32, 40),
+		MainBgTransparency = 0.35,
+		MainStroke         = Color3.fromRGB(210, 235, 255),
+		MainStrokeTrans    = 0.35,
+		MainStrokeThick    = 1,
+		SheenColor         = Color3.fromRGB(255, 255, 255),
+		SheenTransparency  = 0.90,
+		HeaderBg           = Color3.fromRGB(16, 22, 28),
+		TabBtnActive       = Color3.fromRGB(55, 75, 95),
+		TabBtnInactive     = Color3.fromRGB(22, 30, 38),
+		TabTextActive      = Color3.fromRGB(255, 255, 255),
+		TabTextInactive    = Color3.fromRGB(160, 180, 200),
+		RowBg              = Color3.fromRGB(32, 44, 56),
+		RowBgTransparency  = 0.45,
+		TextPrimary        = Color3.fromRGB(240, 248, 255),
+		TextAccent         = Color3.fromRGB(180, 225, 255),
+		BottomBarBg        = Color3.fromRGB(16, 22, 28),
+		StartBtnOff        = Color3.fromRGB(45, 60, 78),
+		StartBtnOn         = Color3.fromRGB(60, 140, 170),
+		StartBtnStroke     = Color3.fromRGB(130, 180, 220),
+		StartBtnText       = Color3.fromRGB(255, 255, 255),
+		StatusText         = Color3.fromRGB(190, 210, 230),
+		SideBtnBg          = Color3.fromRGB(14, 20, 26),
+		SideBtnOpen        = Color3.fromRGB(26, 42, 56),
+		SideBtnClosed      = Color3.fromRGB(40, 20, 20),
+		SideBtnLocked      = Color3.fromRGB(60, 55, 30),
+		SideBtnHover       = Color3.fromRGB(38, 55, 72),
+		SideStroke         = Color3.fromRGB(120, 160, 195),
+		SideText           = Color3.fromRGB(235, 245, 255),
+		SnowColor          = Color3.fromRGB(240, 250, 255)
+	}
+}
+
+----------------------------------------------------------------------
+-- Settings & Active Theme
+----------------------------------------------------------------------
+local Settings = {
+	CtrOn = false,
+	CtrMode = "ue counter",
+	CtrHud = true,
+	CtrKiciaCycleMs = 50,
+	CtrKiciaFlyMs = 25,
+	CtrKiciaBoost = 100000,
+	CtrKiciaBoostMs = 600,
+	CtrKiciaFlySpeed = 15000,
+	CtrKiciaZigAmp = 400,
+	CtrKiciaZigFreq = 8,
+	CtrKiciaDepth = 6,
+	CtrKiciaRadius = 30,
+	CtrVoidSpeed = 3000,
+	CtrLegits = true,
+	CtrBots = true,
+	CtrMaxLegits = 1,
+	CtrLegitDelay = 3,
+	CtrLegitStay = 35, CtrLegitGap = 50, CtrLegitLead = 6,
+	CtrBotStay = 35,   CtrBotGap = 50,   CtrBotLead = 6,
+	CurrentThemeName = "Oceanic Blue",
+	Theme = ThemePresets["Oceanic Blue"],
+	SnowEnabled = true,
+	SnowSpeed = 1,
+}
+
+local function cfg(key, default)
+	local v = Settings[key]
+	if v == nil then return default end
+	return v
+end
+
+local MODE_UE, MODE_KICIA, MODE_SOLIX = "ue counter", "Kicia counter", "Solix counter"
+local MODES = { MODE_UE, MODE_KICIA, MODE_SOLIX }
+
+----------------------------------------------------------------------
+-- 1. Background Snow Effect
+----------------------------------------------------------------------
+local snowGui = Instance.new("ScreenGui")
+snowGui.Name = "ArtigoSnow"
+snowGui.IgnoreGuiInset = true
+snowGui.DisplayOrder = 999
+snowGui.Enabled = Settings.SnowEnabled
+snowGui.Parent = playerGui
+
+local snowParticles = {}
+for i = 1, 150 do
+	local p = Instance.new("Frame")
+	local size = math.random(3, 8)
+	p.Size = UDim2.fromOffset(size, size)
+	p.BackgroundColor3 = Settings.Theme.SnowColor
+	p.BackgroundTransparency = math.random(10, 50) / 100
+	p.BorderSizePixel = 0
+	p.Position = UDim2.new(math.random(), 0, math.random(), 0)
+	p.Active = false
+	local c = Instance.new("UICorner")
+	c.CornerRadius = UDim.new(1, 0)
+	c.Parent = p
+	p.Parent = snowGui
+	
+	table.insert(snowParticles, {
+		Frame = p,
+		SpeedX = math.random(-150, 150) / 1000,
+		SpeedY = math.random(100, 200) / 1000 -- Base speed
+	})
+end
+
+RunService.RenderStepped:Connect(function(dt)
+	if not Settings.SnowEnabled then return end
+	for _, p in ipairs(snowParticles) do
+		local f = p.Frame
+		f.Position = f.Position + UDim2.new(p.SpeedX * dt, 0, p.SpeedY * dt * Settings.SnowSpeed, 0)
+		if f.Position.Y.Scale > 1 then
+			f.Position = UDim2.new(math.random(), 0, -0.05, 0)
+		end
+	end
+end)
+
+----------------------------------------------------------------------
+-- 2. Side Panel
+----------------------------------------------------------------------
+local sideGui = Instance.new("ScreenGui")
+sideGui.Name = "ArtigoHubSide"
+sideGui.ResetOnSpawn = false
+sideGui.IgnoreGuiInset = true
+sideGui.DisplayOrder = 1001
+sideGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+sideGui.Parent = playerGui
+
+local sideHolder = Instance.new("Frame")
+sideHolder.Size = UDim2.fromOffset(75, 50)
+sideHolder.Position = UDim2.new(0, 80, 0, 60) 
+sideHolder.BackgroundTransparency = 1
+sideHolder.Parent = sideGui
+
+local sideButtons = {}
+
+local function makeSideButton(order, label, onClick)
+	local b = Instance.new("TextButton")
+	b.Size = UDim2.fromOffset(75, 22)
+	b.Position = UDim2.fromOffset(0, order * 26)
+	b.BackgroundColor3 = Settings.Theme.SideBtnBg
+	b.BackgroundTransparency = 0
+	b.BorderSizePixel = 0
+	b.Text = ""
+	b.AutoButtonColor = false
+	b.Parent = sideHolder
+
+	local s = Instance.new("UIStroke")
+	s.Color = Settings.Theme.SideStroke
+	s.Transparency = 0
+	s.Thickness = 1
+	s.Parent = b
+
+	local tx = Instance.new("TextLabel")
+	tx.Size = UDim2.fromScale(1, 1)
+	tx.BackgroundTransparency = 1
+	tx.Text = label
+	tx.TextSize = 11
+	tx.Font = Enum.Font.GothamMedium
+	tx.TextColor3 = Settings.Theme.SideText
+	tx.TextXAlignment = Enum.TextXAlignment.Center
+	tx.TextYAlignment = Enum.TextYAlignment.Center
+	tx.Parent = b
+
+	local btnData = { Button = b, Stroke = s, Label = tx, BaseOrder = order }
+	table.insert(sideButtons, btnData)
+
+	b.MouseEnter:Connect(function()
+		TweenService:Create(b, TweenInfo.new(0.12), { BackgroundColor3 = Settings.Theme.SideBtnHover }):Play()
+	end)
+	b.MouseButton1Click:Connect(onClick)
+	return b, tx, s
+end
+
+----------------------------------------------------------------------
+-- 3. Main Panel GUI
+----------------------------------------------------------------------
+local gui = Instance.new("ScreenGui")
+gui.Name = "ArtigoHub"
+gui.ResetOnSpawn = false
+gui.IgnoreGuiInset = true
+gui.DisplayOrder = 1000
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+gui.Parent = playerGui
+
+local frame = Instance.new("Frame")
+frame.Name = "Panel"
+frame.Size = UDim2.fromOffset(440, 260) 
+frame.Position = UDim2.new(0.5, -220, 0.5, -130) 
+frame.BackgroundColor3 = Settings.Theme.MainBg
+frame.BackgroundTransparency = Settings.Theme.MainBgTransparency
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.ClipsDescendants = true
+frame.Parent = gui
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8)
+corner.Parent = frame
+
+local stroke = Instance.new("UIStroke")
+stroke.Color = Settings.Theme.MainStroke
+stroke.Transparency = Settings.Theme.MainStrokeTrans
+stroke.Thickness = Settings.Theme.MainStrokeThick
+stroke.Parent = frame
+
+local sheen = Instance.new("Frame")
+sheen.Size = UDim2.fromScale(1, 1)
+sheen.BackgroundColor3 = Settings.Theme.SheenColor
+sheen.BackgroundTransparency = Settings.Theme.SheenTransparency
+sheen.BorderSizePixel = 0
+sheen.ZIndex = 0
+sheen.Parent = frame
+
+local sheenCorner = Instance.new("UICorner")
+sheenCorner.CornerRadius = UDim.new(0, 8)
+sheenCorner.Parent = sheen
+
+local grad = Instance.new("UIGradient")
+grad.Rotation = 45
+grad.Transparency = NumberSequence.new({
+	NumberSequenceKeypoint.new(0, 0.1),
+	NumberSequenceKeypoint.new(0.5, 0.9),
+	NumberSequenceKeypoint.new(1, 0.4)
+})
+grad.Parent = sheen
+
+----------------------------------------------------------------------
+-- 4. Tab System
+----------------------------------------------------------------------
+local tabs = {
+	{ Name = "UE Counter", Mode = MODE_UE },
+	{ Name = "Kicia Counter", Mode = MODE_KICIA },
+	{ Name = "Solix Counter", Mode = MODE_SOLIX },
+	{ Name = "Themes", Mode = "ThemeMode" }
+}
+
+local activeTab = 1
+local tabButtons = {}
+local tabContents = {}
+local registeredRows = {}
+
+local tabBar = Instance.new("Frame")
+tabBar.Size = UDim2.new(1, 0, 0, 36)
+tabBar.BackgroundColor3 = Settings.Theme.HeaderBg
+tabBar.BackgroundTransparency = 0.25
+tabBar.BorderSizePixel = 0
+tabBar.ZIndex = 2
+tabBar.Parent = frame
+
+local tabBarLayout = Instance.new("UIListLayout")
+tabBarLayout.FillDirection = Enum.FillDirection.Horizontal
+tabBarLayout.Parent = tabBar
+
+local contentHolder = Instance.new("Frame")
+contentHolder.Size = UDim2.new(1, -20, 1, -90)
+contentHolder.Position = UDim2.fromOffset(10, 42)
+contentHolder.BackgroundTransparency = 1
+contentHolder.ZIndex = 2
+contentHolder.Parent = frame
+
+local S = { started = false, mode = nil, status = "off" }
+
+local function selectTab(index)
+	activeTab = index
+	for i, btn in ipairs(tabButtons) do
+		local isActive = (i == index)
+		btn.BackgroundColor3 = isActive and Settings.Theme.TabBtnActive or Settings.Theme.TabBtnInactive
+		btn.BackgroundTransparency = isActive and 0.2 or 0.6
+		btn.TextColor3 = isActive and Settings.Theme.TabTextActive or Settings.Theme.TabTextInactive
+	end
+	for i, content in ipairs(tabContents) do
+		content.Visible = (i == index)
+	end
+	if tabs[index].Mode ~= "ThemeMode" then
+		Settings.CtrMode = tabs[index].Mode
+		S.started = false
+	end
+end
+
+for i, t in ipairs(tabs) do
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1 / #tabs, 0, 1, 0)
+	btn.BackgroundColor3 = Settings.Theme.TabBtnInactive
+	btn.BackgroundTransparency = 0.6
+	btn.BorderSizePixel = 0
+	btn.Text = t.Name
+	btn.TextColor3 = Settings.Theme.TabTextInactive
+	btn.Font = Enum.Font.GothamBold
+	btn.TextSize = 12
+	btn.ZIndex = 3
+	btn.Parent = tabBar
+	table.insert(tabButtons, btn)
+	
+	btn.MouseButton1Click:Connect(function()
+		selectTab(i)
+	end)
+	
+	local content = Instance.new("Frame")
+	content.Size = UDim2.fromScale(1, 1)
+	content.BackgroundTransparency = 1
+	content.Visible = false
+	content.Parent = contentHolder
+	table.insert(tabContents, content)
+end
+
+local function makeSettingRow(parent, yOffset, labelText, valueText)
+	local holder = Instance.new("Frame")
+	holder.Size = UDim2.new(1, 0, 0, 28)
+	holder.Position = UDim2.new(0, 0, 0, yOffset)
+	holder.BackgroundColor3 = Settings.Theme.RowBg
+	holder.BackgroundTransparency = Settings.Theme.RowBgTransparency
+	holder.BorderSizePixel = 0
+	holder.Parent = parent
+
+	local c = Instance.new("UICorner")
+	c.CornerRadius = UDim.new(0, 5)
+	c.Parent = holder
+
+	local txt = Instance.new("TextLabel")
+	txt.Size = UDim2.new(0.65, -10, 1, 0)
+	txt.Position = UDim2.new(0, 10, 0, 0)
+	txt.BackgroundTransparency = 1
+	txt.Text = labelText
+	txt.TextColor3 = Settings.Theme.TextPrimary
+	txt.Font = Enum.Font.GothamMedium
+	txt.TextSize = 12
+	txt.TextXAlignment = Enum.TextXAlignment.Left
+	txt.Parent = holder
+
+	local val = Instance.new("TextLabel")
+	val.Size = UDim2.new(0.35, -10, 1, 0)
+	val.Position = UDim2.new(0.65, 0, 0, 0)
+	val.BackgroundTransparency = 1
+	val.Text = valueText
+	val.TextColor3 = Settings.Theme.TextAccent
+	val.Font = Enum.Font.GothamBold
+	val.TextSize = 12
+	val.TextXAlignment = Enum.TextXAlignment.Right
+	val.Parent = holder
+
+	table.insert(registeredRows, { Holder = holder, Label = txt, Value = val })
+end
+
+makeSettingRow(tabContents[1], 0, "Hit Legits", "True")
+makeSettingRow(tabContents[1], 32, "Hit Bots", "True")
+makeSettingRow(tabContents[1], 64, "Void Speed", "3000")
+makeSettingRow(tabContents[1], 96, "Legit Stay (0.01s)", "35")
+
+makeSettingRow(tabContents[2], 0, "Cycle Length (ms)", "50")
+makeSettingRow(tabContents[2], 32, "Fly Window (ms)", "25")
+makeSettingRow(tabContents[2], 64, "Fly Speed", "15000")
+makeSettingRow(tabContents[2], 96, "Zig Amp", "400")
+
+makeSettingRow(tabContents[3], 0, "Park Depth", "6")
+makeSettingRow(tabContents[3], 32, "Park Radius", "30")
+makeSettingRow(tabContents[3], 64, "Cycle Length (ms)", "50")
+makeSettingRow(tabContents[3], 96, "Fly Window (ms)", "25")
+
+----------------------------------------------------------------------
+-- 5. Bottom Bar
+----------------------------------------------------------------------
+local bottomBar = Instance.new("Frame")
+bottomBar.Size = UDim2.new(1, 0, 0, 44)
+bottomBar.Position = UDim2.new(0, 0, 1, -44)
+bottomBar.BackgroundColor3 = Settings.Theme.BottomBarBg
+bottomBar.BackgroundTransparency = 0.2
+bottomBar.BorderSizePixel = 0
+bottomBar.ZIndex = 2
+bottomBar.Parent = frame
+
+local toggleBtn = Instance.new("TextButton")
+toggleBtn.Size = UDim2.fromOffset(150, 28)
+toggleBtn.Position = UDim2.new(0, 10, 0.5, -14)
+toggleBtn.BackgroundColor3 = Settings.Theme.StartBtnOff
+toggleBtn.BackgroundTransparency = 0.15
+toggleBtn.BorderSizePixel = 0
+toggleBtn.AutoButtonColor = true
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.TextSize = 13
+toggleBtn.TextColor3 = Settings.Theme.StartBtnText
+toggleBtn.Text = "START"
+toggleBtn.ZIndex = 3
+local btnCorner = Instance.new("UICorner") 
+btnCorner.CornerRadius = UDim.new(0, 6) 
+btnCorner.Parent = toggleBtn
+
+local toggleBtnStroke = Instance.new("UIStroke")
+toggleBtnStroke.Color = Settings.Theme.StartBtnStroke
+toggleBtnStroke.Thickness = 1
+toggleBtnStroke.Parent = toggleBtn
+
+toggleBtn.Parent = bottomBar
+
+local status = Instance.new("TextLabel")
+status.Name = "Status"
+status.Size = UDim2.new(1, -180, 1, 0)
+status.Position = UDim2.fromOffset(170, 0)
+status.BackgroundTransparency = 1
+status.Font = Enum.Font.Gotham
+status.TextSize = 12
+status.TextWrapped = true
+status.TextXAlignment = Enum.TextXAlignment.Left
+status.TextColor3 = Settings.Theme.StatusText
+status.Text = "off"
+status.ZIndex = 3
+status.Parent = bottomBar
+
+local isOpen = true
+local isLocked = false
+local openBtn, openLbl, openStroke
+local lockBtn, lockLbl, lockStroke
+
+local function updateSideButtonVisuals()
+	if not openBtn or not lockBtn then return end
+	openBtn.BackgroundColor3 = isOpen and Settings.Theme.SideBtnOpen or Settings.Theme.SideBtnClosed
+	openLbl.TextColor3 = Settings.Theme.SideText
+	openStroke.Color = Settings.Theme.SideStroke
+
+	lockBtn.BackgroundColor3 = isLocked and Settings.Theme.SideBtnLocked or Settings.Theme.SideBtnBg
+	lockLbl.TextColor3 = Settings.Theme.SideText
+	lockStroke.Color = Settings.Theme.SideStroke
+end
+
+----------------------------------------------------------------------
+-- 6. Dynamic Theme Application
+----------------------------------------------------------------------
+local presetButtons = {}
+local snowToggleBtn, snowSpeedBtn
+
+local function applyTheme(themeData, themeName)
+	if not themeData then return end
+	Settings.Theme = themeData
+	if themeName then Settings.CurrentThemeName = themeName end
+	local th = Settings.Theme
+
+	frame.BackgroundColor3 = th.MainBg
+	frame.BackgroundTransparency = th.MainBgTransparency
+	stroke.Color = th.MainStroke
+	stroke.Transparency = th.MainStrokeTrans
+	stroke.Thickness = th.MainStrokeThick
+	sheen.BackgroundColor3 = th.SheenColor
+	sheen.BackgroundTransparency = th.SheenTransparency
+
+	tabBar.BackgroundColor3 = th.HeaderBg
+	for i, btn in ipairs(tabButtons) do
+		local isActive = (i == activeTab)
+		btn.BackgroundColor3 = isActive and th.TabBtnActive or th.TabBtnInactive
+		btn.TextColor3 = isActive and th.TabTextActive or th.TabTextInactive
+	end
+
+	for _, row in ipairs(registeredRows) do
+		row.Holder.BackgroundColor3 = th.RowBg
+		row.Holder.BackgroundTransparency = th.RowBgTransparency
+		row.Label.TextColor3 = th.TextPrimary
+		row.Value.TextColor3 = th.TextAccent
+	end
+
+	bottomBar.BackgroundColor3 = th.BottomBarBg
+	toggleBtn.BackgroundColor3 = Settings.CtrOn and th.StartBtnOn or th.StartBtnOff
+	toggleBtn.TextColor3 = th.StartBtnText
+	toggleBtnStroke.Color = th.StartBtnStroke
+	status.TextColor3 = th.StatusText
+
+	updateSideButtonVisuals()
+
+	for _, p in ipairs(snowParticles) do
+		p.Frame.BackgroundColor3 = th.SnowColor
+	end
+
+	for name, b in pairs(presetButtons) do
+		local selected = (name == Settings.CurrentThemeName)
+		b.UIStroke.Color = selected and th.TextAccent or Color3.fromRGB(60, 60, 70)
+		b.UIStroke.Thickness = selected and 1.5 or 1
+	end
+
+	-- Snow UI colors
+	if snowToggleBtn then
+		snowToggleBtn.BackgroundColor3 = Settings.SnowEnabled and th.StartBtnOn or th.StartBtnOff
+		snowToggleBtn.TextColor3 = th.StartBtnText
+		snowToggleBtn.UIStroke.Color = Settings.SnowEnabled and th.StartBtnStroke or Color3.fromRGB(60, 60, 70)
+	end
+	if snowSpeedBtn then
+		snowSpeedBtn.BackgroundColor3 = th.RowBg
+		snowSpeedBtn.TextColor3 = th.TextAccent
+		snowSpeedBtn.UIStroke.Color = th.SideStroke
+	end
+end
+
+----------------------------------------------------------------------
+-- 7. Populate Theme Config Tab
+----------------------------------------------------------------------
+local themeTabFrame = tabContents[4]
+
+-- Snow Settings Header
+local snowHeader = Instance.new("TextLabel")
+snowHeader.Size = UDim2.new(1, 0, 0, 20)
+snowHeader.BackgroundTransparency = 1
+snowHeader.Text = "Snow Settings"
+snowHeader.TextColor3 = Settings.Theme.TextPrimary
+snowHeader.Font = Enum.Font.GothamBold
+snowHeader.TextSize = 13
+snowHeader.TextXAlignment = Enum.TextXAlignment.Left
+snowHeader.Parent = themeTabFrame
+
+-- Snow Toggle Button
+snowToggleBtn = Instance.new("TextButton")
+snowToggleBtn.Size = UDim2.new(0.48, 0, 0, 30)
+snowToggleBtn.Position = UDim2.fromOffset(0, 24)
+snowToggleBtn.BackgroundColor3 = Settings.SnowEnabled and Settings.Theme.StartBtnOn or Settings.Theme.StartBtnOff
+snowToggleBtn.Text = "Snow: ON"
+snowToggleBtn.Font = Enum.Font.GothamBold
+snowToggleBtn.TextSize = 12
+snowToggleBtn.TextColor3 = Settings.Theme.StartBtnText
+snowToggleBtn.AutoButtonColor = false
+snowToggleBtn.Parent = themeTabFrame
+
+local stCorner = Instance.new("UICorner") stCorner.CornerRadius = UDim.new(0, 5) stCorner.Parent = snowToggleBtn
+snowToggleBtn.UIStroke = Instance.new("UIStroke")
+snowToggleBtn.UIStroke.Color = Settings.SnowEnabled and Settings.Theme.StartBtnStroke or Color3.fromRGB(60, 60, 70)
+snowToggleBtn.UIStroke.Parent = snowToggleBtn
+
+-- Snow Speed Button
+snowSpeedBtn = Instance.new("TextButton")
+snowSpeedBtn.Size = UDim2.new(0.48, 0, 0, 30)
+snowSpeedBtn.Position = UDim2.new(0.52, 0, 0, 24)
+snowSpeedBtn.BackgroundColor3 = Settings.Theme.RowBg
+snowSpeedBtn.Text = "Speed: 1x"
+snowSpeedBtn.Font = Enum.Font.GothamBold
+snowSpeedBtn.TextSize = 12
+snowSpeedBtn.TextColor3 = Settings.Theme.TextAccent
+snowSpeedBtn.AutoButtonColor = false
+snowSpeedBtn.Parent = themeTabFrame
+
+local ssCorner = Instance.new("UICorner") ssCorner.CornerRadius = UDim.new(0, 5) ssCorner.Parent = snowSpeedBtn
+snowSpeedBtn.UIStroke = Instance.new("UIStroke")
+snowSpeedBtn.UIStroke.Color = Settings.Theme.SideStroke
+snowSpeedBtn.UIStroke.Parent = snowSpeedBtn
+
+-- Toggle Logic
+snowToggleBtn.MouseButton1Click:Connect(function()
+	Settings.SnowEnabled = not Settings.SnowEnabled
+	snowToggleBtn.Text = "Snow: " .. (Settings.SnowEnabled and "ON" or "OFF")
+	snowGui.Enabled = Settings.SnowEnabled
+	snowToggleBtn.BackgroundColor3 = Settings.SnowEnabled and Settings.Theme.StartBtnOn or Settings.Theme.StartBtnOff
+	snowToggleBtn.UIStroke.Color = Settings.SnowEnabled and Settings.Theme.StartBtnStroke or Color3.fromRGB(60, 60, 70)
+end)
+
+-- Speed Cycle Logic
+local speeds = {0.5, 1, 1.5, 2, 2.5, 3}
+snowSpeedBtn.MouseButton1Click:Connect(function()
+	local currentIndex = 1
+	for i, v in ipairs(speeds) do
+		if v == Settings.SnowSpeed then currentIndex = i break end
+	end
+	currentIndex = currentIndex + 1
+	if currentIndex > #speeds then currentIndex = 1 end
+	Settings.SnowSpeed = speeds[currentIndex]
+	snowSpeedBtn.Text = "Speed: " .. Settings.SnowSpeed .. "x"
+end)
+
+-- Theme Preset Grid
+local themeScroll = Instance.new("ScrollingFrame")
+themeScroll.Size = UDim2.new(1, 0, 1, -64)
+themeScroll.Position = UDim2.fromOffset(0, 60)
+themeScroll.BackgroundTransparency = 1
+themeScroll.BorderSizePixel = 0
+themeScroll.ScrollBarThickness = 3
+themeScroll.CanvasSize = UDim2.new(0, 0, 0, 180)
+themeScroll.Parent = themeTabFrame
+
+local grid = Instance.new("UIGridLayout")
+grid.CellSize = UDim2.fromOffset(190, 32)
+grid.CellPadding = UDim2.fromOffset(10, 8)
+grid.SortOrder = Enum.SortOrder.LayoutOrder
+grid.Parent = themeScroll
+
+local presetList = {
+	"Oceanic Blue", "Crimson Blood", "Cyber Neon",
+	"Emerald Matrix", "Obsidian Void", "Frostbite Silver"
+}
+
+for i, pName in ipairs(presetList) do
+	local pData = ThemePresets[pName]
+	local pb = Instance.new("TextButton")
+	pb.Name = pName
+	pb.BackgroundColor3 = pData.MainBg
+	pb.BackgroundTransparency = 0.2
+	pb.BorderSizePixel = 0
+	pb.Text = "  " .. pName
+	pb.TextColor3 = pData.TextPrimary
+	pb.Font = Enum.Font.GothamBold
+	pb.TextSize = 12
+	pb.TextXAlignment = Enum.TextXAlignment.Left
+	pb.LayoutOrder = i
+	pb.Parent = themeScroll
+
+	local pbc = Instance.new("UICorner")
+	pbc.CornerRadius = UDim.new(0, 5)
+	pbc.Parent = pb
+
+	local pbs = Instance.new("UIStroke")
+	pbs.Color = (pName == Settings.CurrentThemeName) and pData.TextAccent or Color3.fromRGB(60, 60, 70)
+	pbs.Thickness = 1
+	pbs.Parent = pb
+
+	local pill = Instance.new("Frame")
+	pill.Size = UDim2.fromOffset(14, 14)
+	pill.Position = UDim2.new(1, -22, 0.5, -7)
+	pill.BackgroundColor3 = pData.TextAccent
+	pill.BorderSizePixel = 0
+	pill.Parent = pb
+	local pillC = Instance.new("UICorner")
+	pillC.CornerRadius = UDim.new(1, 0)
+	pillC.Parent = pill
+
+	pb.MouseButton1Click:Connect(function()
+		applyTheme(ThemePresets[pName], pName)
+	end)
+
+	presetButtons[pName] = { Button = pb, UIStroke = pbs }
+end
+
+local function refreshHud(extra)
+	if not gui.Parent then gui.Parent = playerGui end
+	toggleBtn.Text = Settings.CtrOn and "STOP" or "START"
+	toggleBtn.BackgroundColor3 = Settings.CtrOn and Settings.Theme.StartBtnOn or Settings.Theme.StartBtnOff
+	status.Text = extra or (Settings.CtrOn and "starting..." or "off")
+end
+refreshHud()
+
+local ENV
+toggleBtn.MouseButton1Click:Connect(function()
+	Settings.CtrOn = not Settings.CtrOn
+	if ENV then ENV.lastArmTime = os.clock() end
+	refreshHud(Settings.CtrOn and "starting..." or "off")
+end)
+
+----------------------------------------------------------------------
+-- Shared state for Kicia / Solix
+----------------------------------------------------------------------
+local K = {
+	t0 = 0, boostAt = 0,
+	fly = Vector3.zero,
+	stop = nil,
+	stopIdx = -1,
+	spawn = nil,
+	list = {}, last = nil,
+}
+
+local function cycleTimes()
+	local cycle = math.max(cfg("CtrKiciaCycleMs", 50), 5) / 1000
+	local flyWindow = math.min(cfg("CtrKiciaFlyMs", 25) / 1000, cycle * 0.95)
+	return cycle, flyWindow
+end
+
+local function buildSpawnList(spawn, rageBlockers, rageSpotSafe)
+	K.spawn = spawn
+	K.list = {}
+	local blockers = rageBlockers and rageBlockers()
+	local params = blockers and blockers.params
+	if not params then return end
+
+	local depth  = cfg("CtrKiciaDepth", 6)
+	local radius = cfg("CtrKiciaRadius", 30)
+	local rng = Random.new()
+
+	for _ = 1, 60 do
+		if #K.list >= 16 then break end
+		local angle = rng:NextNumber(0, math.pi * 2)
+		local dist  = rng:NextNumber(4, math.max(radius, 5))
+		local origin = spawn + Vector3.new(math.cos(angle) * dist, 8, math.sin(angle) * dist)
+		local ok, hit = pcall(function()
+			return workspace:Raycast(origin, Vector3.new(0, -30, 0), params)
+		end)
+		if ok and hit and hit.Normal.Y > 0.7 then
+			local spot = hit.Position - Vector3.new(0, depth, 0)
+			if not rageSpotSafe or rageSpotSafe(spot) then
+				K.list[#K.list + 1] = spot
+			end
+		end
+	end
+end
+
+local function resolveStopPos(mode, spawn, rageBlockers, rageSpotSafe)
+	local fallback = spawn - Vector3.new(0, cfg("CtrKiciaDepth", 6), 0)
+	if mode ~= MODE_SOLIX then return fallback end
+
+	if K.spawn ~= spawn then buildSpawnList(spawn, rageBlockers, rageSpotSafe) end
+	local n = #K.list
+	if n == 0 then return fallback end
+
+	local idx = math.random(1, n)
+	if n > 1 and idx == K.last then idx = idx % n + 1 end
+	K.last = idx
+	return K.list[idx]
+end
+
+local function kiciaSolixStep(mode, root, dt, now, rageBlockers, rageSpotSafe)
+	local t = now - K.t0
+	local cycle, flyWindow = cycleTimes()
+	local flying = (t % cycle) < flyWindow
+
+	if now >= K.boostAt then
+		if flying then
+			K.fly += Vector3.new(0, cfg("CtrKiciaBoost", 100000), 0)
+		end
+		K.boostAt = now + cfg("CtrKiciaBoostMs", 600) / 1000
+	end
+
+	if not flying then
+		local idx = math.floor(t / cycle)
+		if idx ~= K.stopIdx or not K.stop then
+			K.stopIdx = idx
+			K.stop = resolveStopPos(mode, K.spawn or root.Position, rageBlockers, rageSpotSafe)
+		end
+		root.CFrame = CFrame.new(K.stop) * CFrame.Angles(math.pi / 2, 0, 0)
+	else
+		local zig = math.cos(t * cfg("CtrKiciaZigFreq", 8)) * cfg("CtrKiciaZigAmp", 400) * dt
+		K.fly += Vector3.new(zig, cfg("CtrKiciaFlySpeed", 15000) * dt, 0)
+		root.CFrame = CFrame.new(K.fly) * CFrame.Angles(-math.pi / 2, 0, 0)
+	end
+	root.AssemblyLinearVelocity = Vector3.zero
+end
+
+local function kiciaSolixInit(root, now)
+	K.t0 = now
+	K.boostAt = now
+	K.spawn = root.Position
+	K.fly = root.Position
+	K.stop, K.stopIdx = nil, -1
+	K.list, K.last = {}, nil
+end
+
+----------------------------------------------------------------------
+-- UE counter
+----------------------------------------------------------------------
+local UE = {
+	legit = { last = 0, inPos = false },
+	bot   = { last = 0, inPos = false },
+	voidState = 2, voidT = 0, lastRandTp = 0,
+}
+
+local function ueCounterStep(now, dt, target, isLegit, helpers, setStatus)
+	local char = helpers.getCharacter()
+	local root = helpers.getRoot()
+	local hum  = char and char:FindFirstChildOfClass("Humanoid")
+	if not (root and hum) then return end
+
+	helpers.prepCharacter(char)
+	pcall(function()
+		hum.PlatformStand = true
+		hum.WalkSpeed = 0
+	end)
+
+	if target and target.Character then
+		local tRoot = target.Character:FindFirstChild("HumanoidRootPart")
+		if tRoot then
+			local P     = isLegit and "Legit" or "Bot"
+			local stay  = cfg("Ctr" .. P .. "Stay", 35) / 100
+			local gap   = cfg("Ctr" .. P .. "Gap", 50) / 100
+			local lead  = cfg("Ctr" .. P .. "Lead", 6)
+			local slot  = isLegit and UE.legit or UE.bot
+
+			if not slot.inPos then
+				if now - slot.last >= gap then slot.inPos, slot.last = true, now end
+			elseif now - slot.last >= stay then
+				pcall(helpers.sendToVoid, root)
+				slot.inPos, slot.last = false, now
+			end
+
+			if slot.inPos then
+				local pos = tRoot.Position
+				local vel = tRoot.AssemblyLinearVelocity
+				if vel.Magnitude > 0.5 then pos += vel.Unit * lead end
+
+				if helpers.isUnderMap and helpers.isUnderMap(pos) then
+					pcall(helpers.sendToVoid, root)
+					setStatus("target went under map")
+					return
+				end
+				pcall(function()
+					root.CFrame = CFrame.new(pos + Vector3.new(0, 0, 1), pos + tRoot.CFrame.LookVector)
+						* CFrame.Angles(-math.pi / 2, 0, 0)
+					root.AssemblyLinearVelocity = Vector3.zero
+				end)
+				setStatus(("on %s"):format(target.Name:sub(1, 14)))
+				return
+			end
+
+			pcall(helpers.sendToVoid, root)
+			setStatus(("waiting on %s"):format(target.Name:sub(1, 14)))
+			return
+		end
+	end
+
+	local elapsed = now - UE.voidT
+	if UE.voidState == 1 then
+		if elapsed >= 15 then
+			UE.voidState, UE.voidT = 2, now
+		else
+			pcall(function()
+				root.AssemblyLinearVelocity = Vector3.new(0, cfg("CtrVoidSpeed", 3000), 0)
+			end)
+			if now - UE.lastRandTp >= 10 then
+				UE.lastRandTp = now
+				pcall(function()
+					root.CFrame = CFrame.new(root.Position + Vector3.new(
+						math.random(-2500, 2500), math.random(500, 1200), math.random(-2500, 2500)
+					)) * CFrame.Angles(-math.pi / 2, 0, 0)
+				end)
+			end
+		end
+	else
+		local y = root.Position.Y
+		local floorY = (helpers.mapCentreY and helpers.mapCentreY()) or (y - 1000)
+		pcall(function()
+			root.CFrame = CFrame.new(root.Position.X, y - (y - floorY) * 0.5, root.Position.Z)
+				* CFrame.Angles(-math.pi / 2, 0, 0)
+		end)
+		UE.voidState, UE.voidT, UE.lastRandTp = 1, now, now
+	end
+	setStatus("in the void")
+end
+
+----------------------------------------------------------------------
+-- Environment
+----------------------------------------------------------------------
+local function getRoot()
+	local char = player.Character
+	return char and char:FindFirstChild("HumanoidRootPart") or nil
+end
+
+ENV = {
+	getRoot = getRoot,
+	say = function(s) refreshHud(s) end,
+	stop = function()
+		UE.legit.inPos, UE.bot.inPos = false, false
+	end,
+	rageActive = false,
+	rageWanted = function() return false end,
+	rageBlockers = function()
+		local params = RaycastParams.new()
+		params.FilterType = Enum.RaycastFilterType.Exclude
+		params.FilterDescendantsInstances = { player.Character }
+		return { params = params }
+	end,
+	rageSpotSafe = nil,
+	bots = {},
+	findLegit = function() return nil, 0 end,
+	playerCount = #Players:GetPlayers(),
+	lastArmTime = os.clock(),
+	ueInit = nil,
+	helpers = {
+		getCharacter = function() return player.Character end,
+		getRoot = getRoot,
+		prepCharacter = function(char)
+			for _, d in ipairs(char:GetDescendants()) do
+				if d:IsA("BasePart") then
+					d.CanCollide = false
+					d.CanQuery = false
+				end
+			end
+		end,
+		sendToVoid = function(root)
+			root.CFrame = CFrame.new(root.Position + Vector3.new(0, 500, 0))
+			root.AssemblyLinearVelocity = Vector3.zero
+		end,
+		isUnderMap = function(pos) return pos.Y < -500 end,
+		mapCentreY = nil,
+	},
+}
+
+----------------------------------------------------------------------
+-- Main Tick
+----------------------------------------------------------------------
+local function counterTick(now, dt, env)
+	local on = cfg("CtrOn", false)
+	local rageOn = env.rageActive or (env.rageWanted and env.rageWanted())
+
+	if on and rageOn then
+		if S.started then env.stop(true) end
+		S.started = false
+		S.status = "paused - ragebot is on"
+		env.say(S.status)
+		return
+	end
+	if not on then
+		if S.started then env.stop() end
+		S.started = false
+		S.status = "off"
+		env.say(S.status)
+		return
+	end
+
+	local mode = cfg("CtrMode", MODE_UE)
+	if S.started and S.mode and mode ~= S.mode then
+		env.stop()
+		S.started = false
+		kiciaSolixInit(getRoot() or { Position = Vector3.zero }, now)
+	end
+
+	local root = env.getRoot()
+	if not root then env.say("no character") return end
+
+	if not S.started then
+		S.started, S.mode = true, mode
+		if mode == MODE_KICIA or mode == MODE_SOLIX then
+			kiciaSolixInit(root, now)
+		end
+		if mode == MODE_UE and env.ueInit then
+			pcall(env.ueInit, root)
+		end
+	end
+
+	if mode == MODE_KICIA or mode == MODE_SOLIX then
+		local ok, err = pcall(kiciaSolixStep, mode, root, dt, now, env.rageBlockers, env.rageSpotSafe)
+		if not ok then S.status = "kicia error: " .. tostring(err) end
+	else
+		local delay = cfg("CtrLegitDelay", 3)
+		local armed = delay <= 0 or (now - (env.lastArmTime or 0)) >= delay
+		local target, isLegit = nil, false
+
+		if cfg("CtrLegits", true) and armed then
+			local legit, legitCount = env.findLegit()
+			if legit then
+				target, isLegit = legit, true
+			elseif (legitCount or 0) > math.floor(cfg("CtrMaxLegits", 1)) then
+				S.status = ("%d legits, over cap"):format(legitCount)
+			end
+		end
+		if not target and cfg("CtrBots", true) and env.bots and #env.bots > 0 then
+			target, isLegit = env.bots[1], false
+		end
+
+		pcall(ueCounterStep, now, dt, target, isLegit, env.helpers, function(s) S.status = s end)
+
+		if not armed and S.status == "in the void" then
+			S.status = ("legits arm in %.1fs"):format(delay - (now - (env.lastArmTime or 0)))
+		end
+		if (env.playerCount or 0) == 0 then S.status = "server empty" end
+	end
+
+	env.say(("%s - %s"):format(S.mode or "?", S.status))
+end
+
+----------------------------------------------------------------------
+-- 8. Side Buttons & Drag Logic
+----------------------------------------------------------------------
+openBtn, openLbl, openStroke = makeSideButton(0, "Toggle UI", function()
+	isOpen = not isOpen
+	frame.Visible = isOpen
+	updateSideButtonVisuals()
+end)
+
+lockBtn, lockLbl, lockStroke = makeSideButton(1, "Lock UI", function()
+	isLocked = not isLocked
+	lockLbl.Text = isLocked and "Unlock" or "Lock UI"
+	updateSideButtonVisuals()
+end)
+
+updateSideButtonVisuals()
+
+-- Panel Dragging Logic
+do
+	local dragging, dragStart, startPos
+	frame.InputBegan:Connect(function(input)
+		if isLocked then return end
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch then
+			dragging, dragStart, startPos = true, input.Position, frame.Position
+		end
+	end)
+	frame.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1
+			or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = false
+		end
+	end)
+	UserInputService.InputChanged:Connect(function(input)
+		if dragging and not isLocked and (input.UserInputType == Enum.UserInputType.MouseMovement
+			or input.UserInputType == Enum.UserInputType.Touch) then
+			local d = input.Position - dragStart
+			frame.Position = UDim2.new(
+				startPos.X.Scale, startPos.X.Offset + d.X,
+				startPos.Y.Scale, startPos.Y.Offset + d.Y
+			)
+		end
+	end)
+end
+
+-- Render loop
+local last = os.clock()
+RunService.Heartbeat:Connect(function()
+	local now = os.clock()
+	local dt = now - last
+	last = now
+	if Settings.CtrHud then
+		if not gui.Parent then gui.Parent = playerGui end
+		pcall(counterTick, now, dt, ENV)
+	elseif gui.Parent then
+		gui.Parent = nil
+	end
+end)
+
+-- Initialize UI & Apply Initial Theme
+selectTab(1)
+applyTheme(Settings.Theme, Settings.CurrentThemeName)
